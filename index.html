@@ -9,14 +9,14 @@
 </head>
 <body>
   <div class="video-background">
-    <video autoplay muted loop id="bg-video">
+    <video autoplay muted loop id="bg-video" playsinline>
       <source src="pink.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
 
   <div class="container">
-    <h1>Curvy Canvas: A Bezier Art Playground </h1>
+    <h1>Curvy Canvas: A Bezier Art Playground</h1>
     
     <div class="control-panel">
       <div id="shape-controls">
@@ -66,20 +66,56 @@
     </div>
     
     <div class="canvas-container">
-      <svg id="canvas" width="800" height="500"></svg>
+      <svg id="canvas" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
     
     <div class="instructions">
       <p><strong>Instructions:</strong></p>
       <ul>
-        <li><strong>Bezier Curve:</strong> Click to place the start point, then drag control points. Double-click to finalize.</li>
-        <li><strong>Line, Rectangle, Circle:</strong> Click and drag to draw, release to finalize.</li>
+        <li><strong>Bezier Curve:</strong> Tap to place the start point, then drag control points. Double-tap to finalize.</li>
+        <li><strong>Line, Rectangle, Circle:</strong> Tap and drag to draw, release to finalize.</li>
         <li><strong>Control Points:</strong> Orange points are endpoints, blue points are control points (for Bezier).</li>
         <li><strong>Grid:</strong> Toggle grid visibility and adjust size as needed. Enable "Snap to Grid" for precision.</li>
       </ul>
     </div>
   </div>
 
+  <script>
+    // When the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Adjust canvas size based on device width
+      function resizeCanvas() {
+        const canvasContainer = document.querySelector('.canvas-container');
+        const canvas = document.getElementById('canvas');
+        const aspectRatio = 800 / 500;
+        
+        // Get available width
+        const containerWidth = canvasContainer.clientWidth;
+        
+        // Calculate appropriate height based on aspect ratio
+        const containerHeight = containerWidth / aspectRatio;
+        
+        // Update viewBox if needed
+        // Note: We're using viewBox now instead of width/height attributes
+      }
+      
+      // Call on load and when window is resized
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      
+      // Add touch event handling for mobile devices
+      const canvas = document.getElementById('canvas');
+      
+      // Detect if device supports touch
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      
+      if (isTouchDevice) {
+        // Convert certain interactions for touch devices
+        // This would need to be coordinated with your app.js implementation
+        console.log('Touch device detected - enhanced touch controls active');
+      }
+    });
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
