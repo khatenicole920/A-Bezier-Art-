@@ -11,6 +11,7 @@ let isDragging = false;
 let dragPointIndex = -1;
 let createdShapes = [];
 let gridGroup = null;
+let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 // Initialize control panel elements
 const strokeColorInput = document.getElementById("stroke-color");
@@ -94,8 +95,10 @@ function updateGridSize() {
 function createGrid() {
   gridGroup.selectAll("*").remove();
   
-  const width = parseInt(svg.attr("width"));
-  const height = parseInt(svg.attr("height"));
+  // Get dimensions from viewBox since we're not using width/height attributes
+  const viewBox = svgNode.getAttribute("viewBox").split(" ");
+  const width = parseInt(viewBox[2]);
+  const height = parseInt(viewBox[3]);
   const gridSize = parseInt(gridSizeInput.value);
   
   // Create vertical grid lines
@@ -132,14 +135,44 @@ function snapToGrid(x, y) {
   return { x, y };
 }
 
-// Canvas mouse event handlers
-svg.on("mousedown", handleMouseDown)
-   .on("mousemove", handleMouseMove)
-   .on("mouseup", handleMouseUp)
-   .on("mouseleave", handleMouseUp);
+// Get pointer coordinates from either mouse or touch event
+function getPointerCoords(event) {
+  // If it's a touch event
+  if (event.type.startsWith('touch')) {
+    if (event.touches && event.touches.length > 0) {
+      const touch = event.touches[0];
+      const rect = svgNode.getBoundingClientRect();
+      const svgPoint = svgNode.createSVGPoint();
+      
+      // Calculate the correct coordinates within the SVG's coordinate system
+      svgPoint.x = touch.clientX - rect.left;
+      svgPoint.y = touch.clientY - rect.top;
+      
+      // Adjust for SVG's viewBox
+      const viewBox = svgNode.getAttribute("viewBox").split(" ");
+      const vbWidth = parseInt(viewBox[2]);
+      const vbHeight = parseInt(viewBox[3]);
+      const scale = {
+        x: vbWidth / rect.width,
+        y: vbHeight / rect.height
+      };
+      
+      return [svgPoint.x * scale.x, svgPoint.y * scale.y];
+    }
+    return [0, 0]; // Return default if no touches
+  } 
+  // For mouse events, use d3.pointer
+  return d3.pointer(event);
+}
 
-function handleMouseDown(event) {
-  const coords = d3.pointer(event);
+// Handle pointer down (mouse or touch)
+function handlePointerDown(event) {
+  // Prevent default behavior to avoid scrolling when drawing
+  if (event.type.startsWith('touch')) {
+    event.preventDefault();
+  }
+  
+  const coords = getPointerCoords(event);
   let x = coords[0];
   let y = coords[1];
   
@@ -201,10 +234,16 @@ function handleMouseDown(event) {
   }
 }
 
-function handleMouseMove(event) {
+// Handle pointer move (mouse or touch)
+function handlePointerMove(event) {
+  // Prevent default behavior to avoid scrolling when drawing
+  if (event.type.startsWith('touch')) {
+    event.preventDefault();
+  }
+  
   if (!isDragging) return;
   
-  const coords = d3.pointer(event);
+  const coords = getPointerCoords(event);
   let x = coords[0];
   let y = coords[1];
   
@@ -225,12 +264,18 @@ function handleMouseMove(event) {
   }
 }
 
-function handleMouseUp() {
+// Handle pointer up (mouse or touch)
+function handlePointerUp(event) {
+  // Prevent default behavior
+  if (event.type.startsWith('touch')) {
+    event.preventDefault();
+  }
+  
   if (isDragging) {
     isDragging = false;
     
     if (currentShape !== "bezier") {
-      // For non-bezier shapes, we're done after mouseup
+      // For non-bezier shapes, we're done after pointer up
       finalizeShape();
     }
   }
@@ -402,12 +447,46 @@ function saveSVG() {
   URL.revokeObjectURL(url);
 }
 
-// Double click to finalize a bezier curve
-svg.on("dblclick", function() {
-  if (currentShape === "bezier" && points.length === 4) {
-    finalizeShape();
+// Register both mouse and touch events
+function setupEventListeners() {
+  // Mouse events
+  svg.on("mousedown", handlePointerDown)
+     .on("mousemove", handlePointerMove)
+     .on("mouseup", handlePointerUp)
+     .on("mouseleave", handlePointerUp);
+  
+  // Touch events
+  svg.on("touchstart", handlePointerDown)
+     .on("touchmove", handlePointerMove)
+     .on("touchend", handlePointerUp)
+     .on("touchcancel", handlePointerUp);
+  
+  // Double-click and double-tap for finalizing bezier
+  if (isTouchDevice) {
+    // For touch devices, we use touchend with a timer
+    let lastTap = 0;
+    svg.on("touchend", function(event) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      
+      if (tapLength < 500 && tapLength > 0) {
+        // Double tap detected
+        if (currentShape === "bezier" && points.length === 4) {
+          finalizeShape();
+        }
+        event.preventDefault();
+      }
+      lastTap = currentTime;
+    });
+  } else {
+    // For mouse devices, dblclick works fine
+    svg.on("dblclick", function() {
+      if (currentShape === "bezier" && points.length === 4) {
+        finalizeShape();
+      }
+    });
   }
-});
+}
 
 // Add keyboard shortcuts
 document.addEventListener("keydown", function(event) {
@@ -431,6 +510,29 @@ document.addEventListener("keydown", function(event) {
     resetDrawing();
   }
 });
+
+// Add CSS styles specific to touch devices
+if (isTouchDevice) {
+  // Increase control point size for easier touch
+  const style = document.createElement('style');
+  style.textContent = `
+    .control-point {
+      r: 12 !important; /* Larger radius for touch */
+    }
+    
+    /* Prevent iOS overscroll/bounce effect */
+    html, body {
+      position: fixed;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Setup all event listeners
+setupEventListeners();
 
 // Make sure control inputs update their display values on load
 updateStrokeWidth();
