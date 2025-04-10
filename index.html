@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curvy Canvas: A Bezier Art Playground</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="video-background">
+    <video autoplay muted loop id="bg-video">
+      <source src="pink.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <div class="container">
+    <h1>Curvy Canvas: A Bezier Art Playground </h1>
+    
+    <div class="control-panel">
+      <div id="shape-controls">
+        <button class="shape-button active" data-shape="bezier">Bezier Curve</button>
+        <button class="shape-button" data-shape="line">Line</button>
+        <button class="shape-button" data-shape="rectangle">Rectangle</button>
+        <button class="shape-button" data-shape="circle">Circle</button>
+      </div>
+      
+      <div class="control-row">
+        <label for="stroke-color">Stroke Color:</label>
+        <input type="color" id="stroke-color" value="#000000">
+        <span class="color-preview" id="stroke-preview" style="background-color: #000000;"></span>
+        
+        <label for="stroke-width">Stroke Width:</label>
+        <input type="range" id="stroke-width" min="1" max="20" value="2">
+        <span id="stroke-width-value">2</span>px
+      </div>
+      
+      <div class="control-row">
+        <label for="fill-color">Fill Color:</label>
+        <input type="color" id="fill-color" value="#ffffff">
+        <span class="color-preview" id="fill-preview" style="background-color: #ffffff;"></span>
+        
+        <label>Fill Option:</label>
+        <input type="checkbox" id="use-fill" checked>
+        <label for="use-fill">Use Fill</label>
+      </div>
+      
+      <div class="control-row grid-controls">
+        <label for="show-grid">Show Grid:</label>
+        <input type="checkbox" id="show-grid" checked>
+        
+        <label for="grid-size">Grid Size:</label>
+        <input type="range" id="grid-size" min="10" max="100" value="20">
+        <span id="grid-size-value">20</span>px
+        
+        <label for="snap-to-grid">Snap to Grid:</label>
+        <input type="checkbox" id="snap-to-grid">
+      </div>
+      
+      <div class="button-row">
+        <button class="button" id="clear-btn">Clear Canvas</button>
+        <button class="button" id="undo-btn">Undo Last</button>
+        <button class="button" id="save-btn">Save as SVG</button>
+      </div>
+    </div>
+    
+    <div class="canvas-container">
+      <svg id="canvas" width="800" height="500"></svg>
+    </div>
+    
+    <div class="instructions">
+      <p><strong>Instructions:</strong></p>
+      <ul>
+        <li><strong>Bezier Curve:</strong> Click to place the start point, then drag control points. Double-click to finalize.</li>
+        <li><strong>Line, Rectangle, Circle:</strong> Click and drag to draw, release to finalize.</li>
+        <li><strong>Control Points:</strong> Orange points are endpoints, blue points are control points (for Bezier).</li>
+        <li><strong>Grid:</strong> Toggle grid visibility and adjust size as needed. Enable "Snap to Grid" for precision.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

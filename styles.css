@@ -1,0 +1,240 @@
+/* styles.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fff0f5;
+    color: #333;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  .video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+  
+  #bg-video {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    opacity: 0.3;
+  }
+  
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #d64c78;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .control-panel {
+    width: 100%;
+    background-color: rgba(255, 240, 245, 0.85);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(214, 76, 120, 0.2);
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(214, 76, 120, 0.3);
+  }
+  
+  .control-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    gap: 10px;
+  }
+  
+  #shape-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  
+  .shape-button {
+    background-color: #ffd6e6;
+    border: 1px solid #d64c78;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #d64c78;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .shape-button:hover {
+    background-color: #ffbdd6;
+  }
+  
+  .shape-button.active {
+    background-color: #d64c78;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .canvas-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  #canvas {
+    border: 1px solid #d64c78;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(214, 76, 120, 0.2);
+  }
+  
+  .color-preview {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    border-radius: 50%;
+    margin: 0 5px;
+  }
+  
+  label {
+    margin-right: 5px;
+    font-weight: 500;
+    color: #d64c78;
+  }
+  
+  input[type="range"] {
+    accent-color: #d64c78;
+  }
+  
+  input[type="checkbox"] {
+    accent-color: #d64c78;
+  }
+  
+  .button-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .button {
+    background-color: #d64c78;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+  }
+  
+  .button:hover {
+    background-color: #c03862;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  .grid-line {
+    stroke: #ffbdd6;
+    stroke-width: 1;
+  }
+  
+  .control-point {
+    cursor: move;
+    fill-opacity: 0.7;
+    stroke: white;
+    stroke-width: 2;
+  }
+  
+  .control-line {
+    stroke: #d64c78;
+    stroke-width: 1.5;
+    stroke-dasharray: 5,5;
+  }
+  
+  .instructions {
+    background-color: rgba(255, 214, 230, 0.8);
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(214, 76, 120, 0.1);
+    width: 100%;
+    backdrop-filter: blur(5px);
+    border-left: 5px solid #d64c78;
+  }
+  
+  .instructions p {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #d64c78;
+  }
+  
+  .instructions ul {
+    list-style-position: inside;
+    padding-left: 10px;
+  }
+  
+  .instructions li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      width: 95%;
+      padding: 15px 0;
+    }
+    
+    #canvas {
+      width: 100%;
+      height: auto;
+    }
+    
+    .control-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .button-row {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .button {
+      width: 100%;
+    }
+  }
